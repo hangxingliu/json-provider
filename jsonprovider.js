@@ -30,6 +30,8 @@ http.createServer(function (req, res) {
 			return HTTPResponse(res, 200, fs.readFileSync(path.join(filename, list[id])));
 	});
 }).listen(2333);
+console.log('JSON Server start in port 2333'.green);
+
 
 
 function HTTPResponse(res, status, content) {
