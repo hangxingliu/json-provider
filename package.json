@@ -11,6 +11,9 @@
     "type": "git",
     "url": "git+https://github.com/hangxingliu/json-provider.git"
   },
+  "bin": {
+    "jsonprovider": "bin/jsonprovider"
+  },
   "author": "LiuYue",
   "license": "GPL-3.0",
   "bugs": {
