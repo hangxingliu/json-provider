@@ -1,0 +1,20 @@
+{
+  "name": "json-provider",
+  "version": "1.0.0",
+  "description": "a mini json server",
+  "main": "jsonprovider.js",
+  "scripts": {
+    "test": "node jsonprovider.js --help",
+    "start": "node jsonprovider.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hangxingliu/json-provider.git"
+  },
+  "author": "LiuYue",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/hangxingliu/json-provider/issues"
+  },
+  "homepage": "https://github.com/hangxingliu/json-provider#readme"
+}
