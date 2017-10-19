@@ -4,12 +4,9 @@
 	"files.exclude": {
 		"**/.git": true,
 		"**/.svn": true,
-		"**/.DS_Store": true,
-		"typings": true,
-
-		"jsconfig.json": true,
-		"LICENSE": true,
-		"typings.json": true,
-		"package.json": true
-	}
+		"**/.DS_Store": true
+	},
+	"cSpell.words": [
+		"jsonprovider"
+	]
 }

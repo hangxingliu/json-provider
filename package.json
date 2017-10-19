@@ -1,27 +1,21 @@
 {
   "name": "json-provider",
-  "version": "1.0.0",
-  "description": "a mini json server",
+  "version": "1.1.0",
+  "description": "a json provide server",
   "main": "jsonprovider.js",
-  "scripts": {
-    "test": "node jsonprovider.js --help",
-    "start": "node jsonprovider.js"
-  },
+  "scripts": { "start": "node jsonprovider.js" },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hangxingliu/json-provider.git"
   },
-  "bin": {
-    "jsonprovider": "bin/jsonprovider"
-  },
+  "bin": { "jsonprovider": "jsonprovider.js" },
   "author": "LiuYue",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/hangxingliu/json-provider/issues"
   },
   "homepage": "https://github.com/hangxingliu/json-provider#readme",
-  "dependencies": {
-    "fs-extra": "*",
-    "colors": "*"
+  "devDependencies": {
+    "@types/node": "^8.0.46"
   }
 }

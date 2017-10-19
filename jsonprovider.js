@@ -1,44 +1,61 @@
-var http = require('http');
-var path = require('path');
-var fs = require('fs-extra');
-var colors = require('colors');
-var stdio = require('readline').createInterface({
-	input: process.stdin,
-	output: process.stdout
-});
+#!/usr/bin/env node
 
-http.createServer(function (req, res) {
-	var url = req.url;
-	var urlSplit = url.indexOf('?');
-	var filename = path.join(process.cwd(), 'json', urlSplit < 0 ? url : url.slice(0, urlSplit));
-	if (!fs.existsSync(filename))
-		return HTTPResponse(res, 404);
-	if (fs.statSync(filename).isFile())
-		return HTTPResponse(res, 200, fs.readFileSync(filename));
-	var list = fs.readdirSync(filename).sort();
-	console.log('Request JSON set:');
-	for (var i = 0; i < list.length; i++) 
-		console.log(('\t[' + i + '] ' + list[i]).cyan);
-	stdio.question('Please input a number to select which JSON file will be response > ',
-		function (ans) {
-			var id = parseInt(ans);
-			if (!list[id])
-				return console.error('Please input a correct number!'.red) || HTTPResponse(res, 500);
-			var file = path.join(filename, list[id]);
-			if (!fs.statSync(file).isFile())
-				return console.error('Please select a JSON file!'.red) || HTTPResponse(res, 500);	
-			return HTTPResponse(res, 200, fs.readFileSync(path.join(filename, list[id])));
+//@ts-check
+const PORT = 2333;
+
+let http = require('http'),
+	path = require('path'),
+	fs = require('fs'),
+	readline = require('readline');
+
+(process.argv.indexOf('--help') > 0 || process.argv.indexOf('-h') > 0 ) && help();
+let port = parseInt(process.argv[2]);
+if (isNaN(port) || port < 0 || port > 65536) port = PORT;
+
+http.createServer((req, res) => {
+	let filename = getJSONPathFromURL(req.url);
+	if (isFile(filename)) return responseJSONFile(res,filename);
+	if (isFile(filename + '.json')) return responseJSONFile(res,filename + '.json');
+	if (!isDirectory(filename)) return response(res, 404);
+
+	let list = fs.readdirSync(filename).sort();
+	console.log('Request JSON set:\n' + list.map((item, i) => `  [${i}] ${item}`).join('\n'));
+
+	let stdio = readline.createInterface({ input: process.stdin, output: process.stdout });
+	stdio.question('Please input a number to select which JSON file will be response > ', id => {
+		stdio.close();
+
+		if (!(id in list)) return response500('Please input a correct number!');
+		let file = path.join(filename, list[id]);
+		if (!isFile(file)) return response500('Please select a JSON file!');	
+		return responseJSONFile(res,file);
 	});
-}).listen(2333);
-console.log('JSON Server start in port 2333'.green);
+}).listen(PORT);
+console.log(`JSON Server start in port ${PORT}`);
 
+function isFile(file) { return fs.existsSync(file) && fs.statSync(file).isFile(); }
+function isDirectory(file) { return fs.existsSync(file) && fs.statSync(file).isDirectory(); }
 
+function getJSONPathFromURL(url) { 
+	let i = url.indexOf('?');
+	return path.join(process.cwd(), 'json', i < 0 ? url : url.slice(0, i));
+}
 
-function HTTPResponse(res, status, content) {
+function response500(res, error) { console.error(error); response(res, 500); }
+function responseJSONFile(res, filename) { response(res, 200, fs.readFileSync(filename)); }
+function response(res, status, content) {
 	res.writeHead(status, {
 		'Access-Control-Allow-Origin': '*',
 		'Content-Type': 'application/json;charset: utf-8',	
 	});
 	content && res.write(content);
 	res.end();
+}
+
+function help() { 
+	console.log([
+		`Usage: jsonprovider [port=${PORT}]\n`,
+		`Start a json provide server \n`
+	].join('\n'));
+	process.exit(0);
 }
